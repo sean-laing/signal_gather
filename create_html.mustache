@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> 
+.scale {
+	border-style: solid;
+    border-width: 4px;
+    display: table-cell;
+    height: 100px;
+    width: 50px;
+}
+
+.label {
+    display: table-cell;
+    border-width: 4px;
+}
+
+.name {
+   width: 50px;
+}
+
+{{#list}}{{#sections}}
+#{{zoneID}}{{ID}} {
+    background-color: grey;
+    position: relative;
+    animation-name: {{zoneID}}{{ID}};
+    animation-duration: 30s;
+    animation-delay: 0s;
+}
+@keyframes {{zoneID}}{{ID}} {
+{{#frames}}
+    {{frame}}%  { background-color:rgb({{value}}, {{value}}, {{value}}); }
+{{/frames}}
+}
+{{/sections}}{{/list}}
+
+</style>
+</head>
+<body>
+
+{{#list}}
+<div class="name">{{name}}</div> 
+{{#sections}}
+<div class="label">{{label}}</div>
+<div id="{{zoneID}}{{ID}}" class="scale"></div>
+{{/sections}}{{/list}}
+<div>
+</body>
+</html>
+
