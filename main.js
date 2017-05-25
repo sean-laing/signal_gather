@@ -17,7 +17,7 @@ const devices = {};
 
 
 noble.on('discover', function(peripheral) {
-  const device = devices[peripheral.address];
+  let device = devices[peripheral.address];
   if(device === undefined) {
     device = { address : peripheral.address, rssi : []};
     devices[peripheral.address] = device;
