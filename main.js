@@ -5,6 +5,7 @@ const path = require('path')
 
 const optionDefinitions = [
   { name: 'output', type: String },
+  { name: 'location', type: String}
 ]
 const options = commandLineArgs(optionDefinitions)
 
@@ -32,17 +33,26 @@ noble.on('discover', function(peripheral) {
     devices[peripheral.address] = device;
   }
   device.rssi.push(peripheral.rssi);
-  stringBuilder += (Math.round(Date.now()/1000) + "\t" + peripheral.address + "\t" + peripheral.rssi);
+  stringBuilder += [Math.round(Date.now()/1000), 
+                    peripheral.address, 
+                    peripheral.rssi, 
+                    options.location, 
+                    '\n' ].join('\t');
 });
 
 setTimeout(function() {
   process.exit(1);
 }, 1000*60*60); //kill after one hour, no matter what
 
-setTimeout(() => {
+const dataLogger = () => {
+  console.log("logging data");
+  console.log(stringBuilder);
   const filepath = path.join(options.output,Math.round(Date.now()/1000) + '.tsv');
   fs.writeFile(filepath, stringBuilder, 'utf8', (error) => {
     if(error) console.log('error while trying to write file : ' + error);
   });
   stringBuilder = "";
-}, 1000*60); //log and clear buffer every minute  
+  setTimeout(dataLogger, 1000*60);
+}
+
+setTimeout(dataLogger, 1000*60); //log and clear buffer every minute  
