@@ -1,3 +1,4 @@
+#!/usr/local/bin/Rscript
 
 locations = commandArgs(trailingOnly=TRUE)
 
@@ -13,7 +14,7 @@ loglikelihood <- function(y, py) {
 #modifed to return precision and recall, along with f1, and accuracy
 accuracyMeasures <- function(pred, truth, name="model") {  
   dev.norm <- -2*loglikelihood(as.numeric(truth), pred)/length(pred)    
-  ctable <- table(truth=truth,pred=(pred>0.5))                                      
+  ctable <- table(truth=truth,pred=(pred>0.5))  
   accuracy <- sum(diag(ctable))/sum(ctable)
   precision <- ctable[2,2]/sum(ctable[,2])
   recall <- ctable[2,2]/sum(ctable[2,])
@@ -32,8 +33,8 @@ sensor_data[is.na(sensor_data)] <- -200
 #for each row (dim(sensor_data)[1]) set rowgroup to random number
 #from uniform distribution 
 sensor_data$rowgroup <- runif(dim(sensor_data)[1])
-training <- subset(sensor_data, sensor_data$rowgroup > .1)
-test <- subset(sensor_data, sensor_data$rowgroup <= .1)
+training <- subset(sensor_data, sensor_data$rowgroup > .2)
+test <- subset(sensor_data, sensor_data$rowgroup <= .2)
 
 #split out the vars we want to train on
 training_columns <- setdiff(colnames(sensor_data), list('rowgroup', 'location'))
@@ -43,7 +44,7 @@ library(randomForest)
 #use default number of trees and node size for now
 #TODO, create an iterative model that finding the 'best' tree
 model <- randomForest(x=training[,training_columns],
-                      y=train$location,
+                      y=training$location,
                       importance=T)
 #log the importance of each field for visual inspection
 importance(model)
@@ -52,10 +53,10 @@ importance(model)
 test_prediction <- predict(model, 
                            newdata=test[,training_columns], 
                            type='prob')
-#log the accuracy for visual inspection
-#TODO: write metrics to a file
-outputFrame <- data.frame(location = )
-for(i in locations) {
-    accuracyMeasures(test_prediction[,i],test$location==i)
-}
+write.table(test_prediction,'./data/test_prediction.tsv', sep='\t', col.names = T, row.names = F);
+accuracyMeasures(test_prediction[,"north"],test$location=="north","north")
+accuracyMeasures(test_prediction[,"south"],test$location=="south","south")
+
+
+
 

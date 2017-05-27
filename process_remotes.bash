@@ -12,9 +12,11 @@ do
 done
 
 awk 'seen[$2]++{if(seen[$2]==2){ print $2 }}' ./data/training_data_raw.tsv |
-node transpose_fields.js $1 > ./data/training_data_transposed.tsv
+node transpose_fields.js ./data/training_data_raw.tsv > ./data/training_data_transposed.tsv
 
 cat ./data/training_data_transposed.tsv | 
 cut -f `node remove_sparse.js ./data/training_data_transposed.tsv --columnHeader columns.tsv` > ./data/training_data_clean.tsv
 
 cat columns.tsv ./data/training_data_clean.tsv > ./data/training_data.tsv
+
+./train_and_predict.R south north
