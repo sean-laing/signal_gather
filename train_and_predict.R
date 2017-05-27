@@ -26,7 +26,7 @@ accuracyMeasures <- function(pred, truth, name="model") {
 sensor_data <- read.table('./data/training_data.tsv', header=T, sep='\t')
 #set any missing fields to -200 rssi
 #-200 is 2x minimum rssi
-sensor_data[is.na(sensor_data)] <- -200
+sensor_data[is.na(sensor_data)] <- -1000
 #split into training and test set
 #will use the test sets to get accuracy information
 
@@ -45,7 +45,7 @@ library(randomForest)
 #TODO, create an iterative model that finding the 'best' tree
 model <- randomForest(x=training[,training_columns],
                       y=training$location,
-                      importance=T)
+                      importance=T,ntree=1000, nodesize=60)
 #log the importance of each field for visual inspection
 importance(model)
 
@@ -57,6 +57,12 @@ write.table(test_prediction,'./data/test_prediction.tsv', sep='\t', col.names = 
 accuracyMeasures(test_prediction[,"north"],test$location=="north","north")
 accuracyMeasures(test_prediction[,"south"],test$location=="south","south")
 
+rumba_data <- read.table('./data/rumba_data.tsv', header=T, sep='\t')
+rumba_data[is.na(rumba_data)] <- -1000
+rumba_prediction <- predict(model,
+                            newdata=rumba_data[,training_columns],
+                            type='prob')
+rumba_prediction
 
 
 

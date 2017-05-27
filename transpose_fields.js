@@ -43,6 +43,7 @@ const processDataLine = (line) => {
 	if(!currentColumn) {
 		currentColumn = Array.apply(null, Array(columnsList.length)).map(function () {});
 	}
+	//when we process the rumba data, we can ignore not found locations
 	if(location) {
 		currentColumn[location] = value;
 	}

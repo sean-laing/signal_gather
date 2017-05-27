@@ -3,7 +3,8 @@ const stats = require("stats-lite");
 
 
 const optionDefinitions = [
-  { name: 'columnHeader', type: String }
+  { name: 'columnHeader', type: String },
+  { name: 'noLocation', type:Boolean }
 ];
 const commandLineArgs = require('command-line-args')
 const options = commandLineArgs(optionDefinitions);
@@ -31,7 +32,7 @@ lr.on('line', function (line) {
 lr.on('close', function(){
 	//find to p(x) for field count
 	const p = .95;
-	const p_x = stats.percentile(countMap, .2);
+	const p_x = stats.percentile(countMap, .50);
 	//remove any, including location label, (which will always be > .99, as it's the max value) outliers
 	const p_bottom = stats.percentile(countMap, .99)
 	console.error("cut off is: " + p_x);
@@ -51,10 +52,17 @@ lr.on('close', function(){
 	}
 	let columnHeader = "";
 	for(let i = 1; i <= accepted_count; i++) {
-		columnHeader += (i + '\t');
+		columnHeader += columnHeader == "" ? i : ('\t' + i);
 	}
-	drop_string += "," + (fieldCount);
-	columnHeader += "location\n";
+	if(!options.noLocation) {
+		drop_string += "," + (fieldCount);
+		columnHeader += "\tlocation\n";
+	} else {
+		columnHeader += "\n";
+	}
+
 	console.log(drop_string);
-	fs.writeFileSync(options.columnHeader, columnHeader, 'utf8');
+	if(options.columnHeader) {
+		fs.writeFileSync(options.columnHeader, columnHeader, 'utf8');
+	}
 });
