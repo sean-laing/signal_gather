@@ -53,7 +53,7 @@ importance(model)
 test_prediction <- predict(model, 
                            newdata=test[,training_columns], 
                            type='prob')
-write.table(test_prediction,'./data/test_prediction.tsv', sep='\t', col.names = T, row.names = F);
+write.table(test_prediction,'./data/test_prediction.tsv', sep='\t', col.names = T, row.names = F)
 accuracyMeasures(test_prediction[,"north"],test$location=="north","north")
 accuracyMeasures(test_prediction[,"south"],test$location=="south","south")
 
@@ -63,6 +63,6 @@ rumba_prediction <- predict(model,
                             newdata=rumba_data[,training_columns],
                             type='prob')
 rumba_prediction
-
+write.table(rumba_prediction,'./data/rumba_predicition.tsv', sep='\t', col.names = F, row.names = F, append = T)
 
 

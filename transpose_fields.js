@@ -24,7 +24,7 @@ let currentColumn;
 
 const processDataLine = (line) => {
 	const lineColumns = line.split("\t");
-	const time = lineColumns[0];
+	const time = Math.floor(parseInt(lineColumns[0],10) / 20); //group by 5 second intervals
 	const macaddress = lineColumns[1];
 	const value = lineColumns[2];
 	const value_location = lineColumns[3];

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+rm ./data/rumba_predicition.tsv
+
 while(true); do ##begin of infinite loop
 
 rm ./data/training_data_raw.tsv
@@ -8,8 +10,8 @@ echo $@
 ##TODO: real parameter parsing
 ##TODO: remove hard-coded paths
 ##Take the last trailing 30 minutes of observations from north and south
-ls ./remote_data/south | tr ' ' '/n' | tail -n 30 | xargs -I % cat ./remote_data/south/% > ./data/training_data_raw.tsv
-ls ./remote_data/north | tr ' ' '/n' | tail -n 30 | xargs -I % cat ./remote_data/north/% >> ./data/training_data_raw.tsv
+ls ./remote_data/south | tr ' ' '/n' | tail -n 60 | xargs -I % cat ./remote_data/south/% > ./data/training_data_raw.tsv
+ls ./remote_data/north | tr ' ' '/n' | tail -n 60 | xargs -I % cat ./remote_data/north/% >> ./data/training_data_raw.tsv
 ls ./remote_data/rumba | tr ' ' '/n' | tail -n 1 | xargs -I %  cat ./remote_data/rumba/% > ./data/rumba_raw.tsv
 
 #awk gets the unique mac address in the training data and pipes it into
@@ -35,6 +37,6 @@ cat rumba_columns.tsv ./data/rumba_data_clean.tsv > ./data/rumba_data.tsv
 
 ./train_and_predict.R ##TODO: take parameters for supporting more than north and south as hard coded area classes
 
-sleep 5
+sleep 20 
 
 done ##end of infinite loop

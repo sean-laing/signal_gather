@@ -14,13 +14,15 @@ const lr = require('readline').createInterface({
 });
 
 const countMap = [];
+
 let fieldCount;
 lr.on('line', function (line) {
 	const lineFields = line.split('\t');
 	fieldCount = lineFields.length;
 	for(var i = 0; i < lineFields.length; i++) {
 		var value = lineFields[i];
-		if(value && value !== "" && (value > -80 || typeof value == "string") ) {
+		//TODO: hard coded for now
+		if(value && value !== "" && value !== "north" && value !== "south" && value !== "rumba") {
 			countMap[i] = !countMap[i] ? 1 : countMap[i] + 1;
 		}
 	}
@@ -32,7 +34,7 @@ lr.on('line', function (line) {
 lr.on('close', function(){
 	//find to p(x) for field count
 	const p = .95;
-	const p_x = stats.percentile(countMap, .50);
+	const p_x = stats.percentile(countMap, .70);
 	//remove any, including location label, (which will always be > .99, as it's the max value) outliers
 	const p_bottom = stats.percentile(countMap, .99)
 	console.error("cut off is: " + p_x);
