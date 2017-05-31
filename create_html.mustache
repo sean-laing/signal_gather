@@ -3,11 +3,9 @@
 <head>
 <style> 
 .scale {
-	border-style: solid;
-    border-width: 4px;
     display: table-cell;
     height: 100px;
-    width: 50px;
+    width: 10px;
 }
 
 .label {
@@ -19,21 +17,6 @@
    width: 50px;
 }
 
-{{#list}}{{#sections}}
-#{{zoneID}}{{ID}} {
-    background-color: green;
-    position: relative;
-    animation-name: {{zoneID}}{{ID}};
-    animation-duration: 30s;
-    animation-delay: 0s;
-}
-@keyframes {{zoneID}}{{ID}} {
-{{#frames}}
-    {{frame}}%  { background-color:rgb({{value}}, {{value}}, {{value}}); }
-{{/frames}}
-}
-{{/sections}}{{/list}}
-
 </style>
 </head>
 <body>
@@ -41,7 +24,9 @@
 {{#list}}
 <div class="name">{{name}}</div> 
 {{#sections}}
-<div id="{{zoneID}}{{ID}}" class="scale"></div>
+{{#frames}}
+<div class="scale" style="background-color: rgb({{value}}, {{value}}, {{value}});"></div>
+{{/frames}}
 {{/sections}}{{/list}}
 <div>
 </body>

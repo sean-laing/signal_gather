@@ -1,0 +1,12 @@
+@startuml
+[BLE Beacon 1] --> [North Collector]
+[BLE Beacon 2] --> [North Collector]
+[BLE Beacon 1] --> [South Collector]
+[BLE Beacon 2] --> [South Collector]
+[BLE Beacon 1] --> [Rumba]
+[BLE Beacon 2] --> [Rumba]
+[Rumba] --> [SSH FS]
+[North Collector] --> [SSH FS]
+[SSH FS] --> [R Random Forest]
+[R Random Forest] --> [Live Rumba Timeline]
+@enduml

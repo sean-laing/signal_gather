@@ -4,8 +4,10 @@ const ms = require('mustache');
 
 const list = [];
 const leftFactor = (value) => {
-	let result = 255-value*255;
-	return result > 255 ? 255 : result;
+	if(value > .9) return 255;
+	if(value < .1) return 0;
+	let result = value*255;
+	return Math.floor(result > 255 ? 255 : result);
 }
 
 //each zone has 4 sections, zones are column

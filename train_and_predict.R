@@ -1,7 +1,5 @@
 #!/usr/local/bin/Rscript
 
-locations = commandArgs(trailingOnly=TRUE)
-
 #some basic eval code, taken from Pratical Data Science with R
 loglikelihood <- function(y, py) { 
   pysmooth <- ifelse(py==0, 1e-12,
@@ -26,15 +24,13 @@ accuracyMeasures <- function(pred, truth, name="model") {
 sensor_data <- read.table('./data/training_data.tsv', header=T, sep='\t')
 #set any missing fields to -200 rssi
 #-200 is 2x minimum rssi
-sensor_data[is.na(sensor_data)] <- -1000
+sensor_data[is.na(sensor_data)] <- -200
 #split into training and test set
 #will use the test sets to get accuracy information
 
 #for each row (dim(sensor_data)[1]) set rowgroup to random number
 #from uniform distribution 
 sensor_data$rowgroup <- runif(dim(sensor_data)[1])
-training <- subset(sensor_data, sensor_data$rowgroup > .2)
-test <- subset(sensor_data, sensor_data$rowgroup <= .2)
 
 #split out the vars we want to train on
 training_columns <- setdiff(colnames(sensor_data), list('rowgroup', 'location'))
@@ -43,26 +39,19 @@ training_columns <- setdiff(colnames(sensor_data), list('rowgroup', 'location'))
 library(randomForest)
 #use default number of trees and node size for now
 #TODO, create an iterative model that finding the 'best' tree
-model <- randomForest(x=training[,training_columns],
-                      y=training$location,
-                      importance=T,ntree=1000, nodesize=60)
+model_1 <- randomForest(x=sensor_data[,training_columns],
+                        y=sensor_data$location,
+                        importance=T)
 #log the importance of each field for visual inspection
-importance(model)
-
-#predict the test data, and check for accuracy of each column
-test_prediction <- predict(model, 
-                           newdata=test[,training_columns], 
-                           type='prob')
-write.table(test_prediction,'./data/test_prediction.tsv', sep='\t', col.names = T, row.names = F)
-accuracyMeasures(test_prediction[,"north"],test$location=="north","north")
-accuracyMeasures(test_prediction[,"south"],test$location=="south","south")
+importance(model_1)
+summary(model_1)
 
 rumba_data <- read.table('./data/rumba_data.tsv', header=T, sep='\t')
-rumba_data[is.na(rumba_data)] <- -1000
-rumba_prediction <- predict(model,
+rumba_data[is.na(rumba_data)] <- -200
+rumba_prediction_1 <- predict(model_1,
                             newdata=rumba_data[,training_columns],
                             type='prob')
-rumba_prediction
-write.table(rumba_prediction,'./data/rumba_predicition.tsv', sep='\t', col.names = F, row.names = F, append = T)
+rumba_prediction_1
+write.table(rumba_prediction_1,'./data/rumba_predicition.tsv', sep='\t', col.names = F, row.names = F) #, append = T)
 
 

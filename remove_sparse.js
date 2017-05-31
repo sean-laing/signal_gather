@@ -34,7 +34,7 @@ lr.on('line', function (line) {
 lr.on('close', function(){
 	//find to p(x) for field count
 	const p = .95;
-	const p_x = stats.percentile(countMap, .70);
+	const p_x = stats.percentile(countMap, .85);
 	//remove any, including location label, (which will always be > .99, as it's the max value) outliers
 	const p_bottom = stats.percentile(countMap, .99)
 	console.error("cut off is: " + p_x);
