@@ -23,11 +23,10 @@
 
 {{#list}}
 <div class="name">{{name}}</div> 
-{{#sections}}
-{{#frames}}
-<div class="scale" style="background-color: rgb({{value}}, {{value}}, {{value}});"></div>
-{{/frames}}
-{{/sections}}{{/list}}
+{{#section.frames}}
+<div class="scale" style="background-color: rgb({{red}}, {{green}}, {{blue}});"></div>
+{{/section.frames}}
+{{/list}}
 <div>
 </body>
 </html>

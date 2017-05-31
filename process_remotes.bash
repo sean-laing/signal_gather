@@ -43,7 +43,7 @@ cat rumba_columns.tsv ./data/rumba_data_clean.tsv > ./data/rumba_data.tsv
 ./train_and_predict.R ##TODO: take parameters for supporting more than north and south as hard coded area classes
 ./train_and_test.R
 #render a animation of all the predicted frames
-cat data/rumba_predicition.tsv | node create_html.js `wc -l data/rumba_predicition.tsv` > rumba.html
+cat data/rumba_predicition.tsv | node create_html.js > rumba.html
 
 #new data is only present every 60s
 sleep 60

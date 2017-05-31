@@ -1,20 +1,22 @@
 const fs = require('fs');
 const readline = require('readline');
 const ms = require('mustache');
+const stats = require('stats-lite');
 
 const list = [];
-const leftFactor = (value) => {
-	if(value > .9) return 255;
-	if(value < .1) return 0;
-	let result = value*255;
-	return Math.floor(result > 255 ? 255 : result);
+const factor = (value, color) => {
+	if(color==="red") {
+		if(value < .5) return 255 - Math.floor(value * 255);
+		return 0;
+	}
+	if(color==="green") {
+		if(value >= .5) return Math.floor(value * 255);
+		return 0;
+	}
+	return 0;
 }
 
-//each zone has 4 sections, zones are column
-//number of zones is a parameter, we pull each one from
-//input columns
 const zoneCount = 2;
-const maxIndex = process.argv[2];
 let headers = ["north", "south"];
 let currentIndex = 0;
 
@@ -22,30 +24,28 @@ let currentIndex = 0;
 for(let i = 0; i<zoneCount; i++) {
 	list.push({
 		zoneID : "_" + i,
-		sections : [ 
-			{ factor : leftFactor, frames : [], label : "100%" }
-		]
+		section : { factor : factor, frames : [] }
 	});
 }
+let lastValue = [];
 
-
-
-//zones are stubbed out
-//read the results file
 const processLine = (line) => {
 	const lineFields = line.split('\t'); //assumes tabs
 	for(let i = 0; i < zoneCount; i++) {
 		const zone = list[i];
-		zone.name = headers[i];
-		for(let j = 0; j < zone.sections.length; j++) {
-			let section = zone.sections[j];
-			section.ID = j;
-			let value = lineFields[i];
-			section.frames.push({
-				value : section.factor(value),
-				frame : currentIndex/maxIndex * 100
-			});
+		let value = lineFields[i];
+		lastValue.push(value);
+		if(lastValue.length === 3) {
+			value = stats.mean(lastValue);
+			lastValue.pop();
 		}
+		zone.name = headers[i];
+		zone.section.frames.push({
+			red : zone.section.factor(value,"red"),
+			green : zone.section.factor(value,"green"),
+			blue : 0
+		});
+		
 	}
 	currentIndex++;
 }
